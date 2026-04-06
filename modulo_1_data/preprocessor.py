@@ -21,8 +21,8 @@ class DataPreprocessor:
     def load_sp500(self) -> pd.Series:
         """Carga el S&P 500, limpia el formato multi-índice de Yahoo y realiza resampling.
 
-        El archivo sp500.csv descargado en la Tarea 1.2 contiene datos diarios con cabeceras. 
-        Esta función extrae el cierre ('Close') y lo convierte a mensual.
+        El archivo sp500.csv descargado en la Tarea 1.2 contiene datos diarios con cabeceras
+        complejas. Esta función extrae el cierre ('Close') y lo convierte a mensual.
 
         Returns:
             Serie con el S&P 500 en frecuencia mensual (último valor del mes).
@@ -36,12 +36,14 @@ class DataPreprocessor:
         # Saltamos las primeras 2 filas para obtener un dataframe limpio.
         df = pd.read_csv(ruta_archivo, skiprows=2, index_col=0, parse_dates=True)
         
+        # Ahora las columnas deberían ser las estándar: Close, High, Low, Open, Volume
         if 'Close' in df.columns:
             cierre_sp500 = df['Close']
         else:
+            # Alternativa en caso de fallo
             cierre_sp500 = df.iloc[:, 0]
 
-        # Convertir el índice a datetime
+        # Convertir el índice a datetime si no lo es ya
         cierre_sp500.index = pd.to_datetime(cierre_sp500.index)
         
         # Resampling a mensual usando el último valor disponible del mes
@@ -53,7 +55,7 @@ class DataPreprocessor:
         return sp500_mensual
 
     def load_merged_gold(self) -> pd.Series:
-        """Une los datos históricos de Oro (dataset GitHub) con los modernos (Yahoo Finance).
+        """Une los datos históricos de Oro (GitHub) con los modernos (Yahoo Finance).
 
         Utiliza oro_historico.csv para el periodo 1833-1999 y oro.csv para 2000+.
 
@@ -119,7 +121,7 @@ class DataPreprocessor:
     def alinear_todas_las_series(self, fecha_inicio: Optional[str] = None) -> pd.DataFrame:
         """Carga todas las series disponibles y las alinea en un único DataFrame mensual.
 
-        Incluye las series de FRED, el S&P 500 y el Oro.
+        Incluye las 12 series de FRED, el S&P 500 y el Oro.
 
         Args:
             fecha_inicio: Fecha mínima para el índice temporal.
@@ -129,7 +131,8 @@ class DataPreprocessor:
         """
         series_fred = [
             "usrec", "unrate", "cpiaucsl", "indpro", "m2sl", "wtisplc",
-            "icsa", "houst", "gs10", "tb3ms", "baa", "ppiaco"
+            "icsa", "houst", "gs10", "tb3ms", "baa", "ppiaco",
+            "usalolitoaastsam" 
         ]
         
         dicc_series = {}
@@ -146,10 +149,10 @@ class DataPreprocessor:
                 serie_mensual = serie.resample('ME').last()
                 dicc_series[id_serie] = serie_mensual
 
-        # 2. Cargar S&P 500 (ya normalizado por load_sp500)
+        # 2. Cargar S&P 500 (ya viene normalizado por load_sp500)
         dicc_series['sp500'] = self.load_sp500()
 
-        # 3. Cargar Oro (ya normalizado por load_merged_gold)
+        # 3. Cargar Oro (ya viene normalizado por load_merged_gold)
         dicc_series['precio_oro'] = self.load_merged_gold()
 
         # 4. Crear DataFrame base
@@ -165,7 +168,7 @@ class DataPreprocessor:
         if fecha_inicio:
             df_final = df_final[df_final.index >= fecha_inicio]
         
-        # Reindexar para asegurar que no faltan meses en el índice
+        # Reindexar para asegurar que no falten meses en el índice (frecuencia estricta)
         if not df_final.empty:
             indice_maestro = pd.date_range(
                 start=df_final.index.min(), 
@@ -213,7 +216,7 @@ class DataPreprocessor:
         df_imputado = df.interpolate(method='linear', limit_area='inside')
         
         # 2. Eliminar filas con nulos (principalmente al final por retardo de publicación)
-        # Esto asegura un dataset 100% con datos para el modelado
+        # Esto asegura un dataset 100% denso para el modelado
         df_limpio = df_imputado.dropna()
         
         return df_limpio
@@ -293,7 +296,7 @@ if __name__ == "__main__":
         
         # Guardar dataset normalizado final
         ruta_normalizada = preprocesador.save_to_processed(df_normalizado, "dataset_normalizado.csv")
-        print(f"Dataset normalizado final (16 indicadores) guardado en: {ruta_normalizada}")
+        print(f"Dataset normalizado final guardado en: {ruta_normalizada}")
         print(f"  - Dimensiones: {df_normalizado.shape}")
         
         # Verificar estadísticas rápidas

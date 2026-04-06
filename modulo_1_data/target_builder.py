@@ -47,7 +47,11 @@ class TargetBuilder:
         target_6m = usrec_real.shift(-6)
         target_12m = usrec_real.shift(-12)
 
-        # 4. Unir a las features normalizadas       
+        # 4. Unir a las features normalizadas
+        # Primero eliminamos 'usrec' de df_norm si no queremos que sea feature (redundante)
+        # Pero a veces el estado actual de recesión es una feature útil.
+        # Lo mantendremos como feature normalizada por ahora.
+        
         df_final = df_norm.copy()
         df_final['target_6m'] = target_6m
         df_final['target_12m'] = target_12m

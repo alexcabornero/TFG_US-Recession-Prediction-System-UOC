@@ -37,7 +37,7 @@ class SpreadBuilder:
         df_spreads = df.copy()
 
         # 1. Yield Spread (Diferencial de tipos): Largo plazo - Corto Plazo
-        # Refleja la pendiente de la curva de tipos.
+        # Refleja la pendiente de la curva de tipos. Inversión = Señal de recesión.
         if 'gs10' in df.columns and 'tb3ms' in df.columns:
             df_spreads['yield_spread'] = df['gs10'] - df['tb3ms']
             print("Spread de tipos (gs10 - tb3ms) calculado.")

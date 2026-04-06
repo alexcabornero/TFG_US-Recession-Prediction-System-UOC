@@ -12,7 +12,7 @@ from modulo_1_data.api_connector import FREDConnector, YahooFinanceConnector
 # Configuración de rutas
 RUTA_DATOS_BRUTOS = os.path.join("data", "raw")
 
-# Lista de series FRED (Tarea 1.2.1)
+# Lista de series FRED (Tarea 1.2.1) + CLI (Ampliación 06/04/2026)
 SERIES_FRED = {
     "USREC": "NBER Recession Indicator",
     "UNRATE": "Unemployment Rate",
@@ -25,7 +25,8 @@ SERIES_FRED = {
     "GS10": "10-Year Treasury Yield",
     "TB3MS": "3-Month Treasury Bill",
     "BAA": "Moody's Seasoned Baa Corporate Bond Yield",
-    "PPIACO": "Producer Price Index (All Commodities)"
+    "PPIACO": "Producer Price Index (All Commodities)",
+    "USALOLITOAASTSAM": "Composite Leading Indicator (CLI) Amplitude Adjusted"
 }
 
 # Lista de tickers Yahoo Finance
@@ -45,6 +46,7 @@ class DataDownloader:
         
         # Asegurar que el directorio de datos existe
         os.makedirs(RUTA_DATOS_BRUTOS, exist_ok=True)
+        self.errores = False
 
     def download_fred_series(self, fecha_inicio: str = None) -> None:
         """Descarga todas las series de FRED definidas.
@@ -65,6 +67,7 @@ class DataDownloader:
                 print(f"    Guardado en: {ruta_archivo}")
             except Exception as e:
                 print(f"    [ERROR] No se pudo descargar {id_serie}: {e}")
+                self.errores = True
 
     def download_market_data(self, fecha_inicio: str = "1927-01-01", fecha_fin: str = "2026-02-28") -> None:
         """Descarga datos de mercado desde Yahoo Finance.
@@ -87,6 +90,7 @@ class DataDownloader:
                 print(f"    Guardado en: {ruta_archivo} (Intervalo: {intervalo})")
             except Exception as e:
                 print(f"    [ERROR] No se pudo descargar {ticker}: {e}")
+                self.errores = True
 
     def download_historical_gold(self) -> None:
         """Descarga precios históricos del oro desde un repositorio de GitHub (1833-presente).
@@ -102,6 +106,7 @@ class DataDownloader:
             print(f"    Guardado en: {ruta_archivo}")
         except Exception as e:
             print(f"    [ERROR] No se pudo descargar el oro histórico: {e}")
+            self.errores = True
 
     def run_full_download(self) -> None:
         """Ejecuta la descarga completa de todos los indicadores."""
@@ -112,5 +117,11 @@ class DataDownloader:
 
 
 if __name__ == "__main__":
+    import sys
     descargador = DataDownloader()
     descargador.run_full_download()
+    if descargador.errores:
+        print("\n[AVISO] La descarga finalizó con errores.")
+        sys.exit(1)
+    else:
+        sys.exit(0)
