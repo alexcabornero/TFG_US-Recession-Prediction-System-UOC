@@ -16,26 +16,23 @@ class TargetBuilder:
         """
         self.ruta_procesada = ruta_procesada
 
-    def construir_targets(self, nombre_maestro: str = "dataset_maestro.csv", 
-                         nombre_normalizado: str = "dataset_normalizado.csv") -> pd.DataFrame:
-        """Genera los targets desplazados y los une a las features normalizadas.
+    def construir_targets(self, nombre_maestro: str = "dataset_maestro.csv") -> pd.DataFrame:
+        """Genera los targets desplazados y los une a las features sin normalizar.
 
         Args:
-            nombre_maestro: Dataset con valores originales (para extraer usrec binario).
-            nombre_normalizado: Dataset con features ya escaladas.
+            nombre_maestro: Dataset con valores originales (para extraer usrec binario y features).
 
         Returns:
-            DataFrame unificado con features y targets, sin valores nulos.
+            DataFrame unificado con features y targets, sin valores nulos, sin normalizar.
         """
         ruta_maestro = os.path.join(self.ruta_procesada, nombre_maestro)
-        ruta_normalizado = os.path.join(self.ruta_procesada, nombre_normalizado)
 
-        if not os.path.exists(ruta_maestro) or not os.path.exists(ruta_normalizado):
-            raise FileNotFoundError("No se encontraron los datasets necesarios en data/processed")
+        if not os.path.exists(ruta_maestro):
+            raise FileNotFoundError(f"No se encontró {ruta_maestro} en data/processed")
 
-        # 1. Cargar datasets
+        # 1. Cargar dataset maestro (sin normalizar)
         df_maestro = pd.read_csv(ruta_maestro, index_col=0, parse_dates=True)
-        df_norm = pd.read_csv(ruta_normalizado, index_col=0, parse_dates=True)
+        df_features = df_maestro.copy()
 
         # 2. Extraer USREC original (binario: 0 o 1)
         # Nota: usrec en df_norm está normalizado (centrado), no sirve como target discreto.
@@ -47,12 +44,11 @@ class TargetBuilder:
         target_6m = usrec_real.shift(-6)
         target_12m = usrec_real.shift(-12)
 
-        # 4. Unir a las features normalizadas
-        # Primero eliminamos 'usrec' de df_norm si no queremos que sea feature (redundante)
-        # Pero a veces el estado actual de recesión es una feature útil.
-        # Lo mantendremos como feature normalizada por ahora.
+        # 4. Unir targets a las features sin normalizar
+        # Mantenemos usrec como feature (estado actual de recesión es un predictor válido)
+        # La normalización se aplicará dentro del pipeline de CV en baseline.py
         
-        df_final = df_norm.copy()
+        df_final = df_features.copy()
         df_final['target_6m'] = target_6m
         df_final['target_12m'] = target_12m
 

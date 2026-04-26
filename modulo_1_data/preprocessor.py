@@ -286,24 +286,13 @@ if __name__ == "__main__":
         if os.path.exists(ruta_maestra_csv):
             df_maestro = pd.read_csv(ruta_maestra_csv, index_col=0, parse_dates=True)
             print(f"Dataset maestro cargado. Dimensiones: {df_maestro.shape}")
+            print(f"  - Rango temporal: {df_maestro.index.min().date()} a {df_maestro.index.max().date()}")
+            print(f"  - Columnas: {list(df_maestro.columns)}")
         else:
             print("Aviso: No se encontró dataset_maestro.csv. Usando dataset_alineado.csv")
             df_maestro = df_final
-
-        # 7. Normalización Final (Hito 1 corregido)
-        print("\n--- Normalizando Datos (StandardScaler) ---")
-        df_normalizado = preprocesador.normalizar_datos(df_maestro)
         
-        # Guardar dataset normalizado final
-        ruta_normalizada = preprocesador.save_to_processed(df_normalizado, "dataset_normalizado.csv")
-        print(f"Dataset normalizado final guardado en: {ruta_normalizada}")
-        print(f"  - Dimensiones: {df_normalizado.shape}")
-        
-        # Verificar estadísticas rápidas
-        print("\nEstadísticas del dataset normalizado (primeras 5 columnas):")
-        print(df_normalizado.iloc[:, :5].describe().loc[['mean', 'std']])
-        
-        print("\n¡Proceso de preprocesamiento y normalización finalizado con éxito!")
+        print("\n¡Proceso de preprocesamiento finalizado con éxito!")
         
     except Exception as e:
         print(f"Error en el preprocesamiento: {e}")

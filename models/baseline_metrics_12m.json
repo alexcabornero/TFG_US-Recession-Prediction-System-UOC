@@ -1,0 +1,101 @@
+{
+  "modelo": "LogisticRegression",
+  "n_folds": 4,
+  "umbral_optimo": 0.6543427530031798,
+  "folds": [
+    {
+      "fold": 1,
+      "nombre": "Fold 1",
+      "train_start": "1967-01-31",
+      "train_end": "1980-08-31",
+      "test_start": "1981-09-30",
+      "test_end": "1988-04-30",
+      "train_size": 164,
+      "test_size": 80,
+      "umbral_optimo": 0.6857703595269282,
+      "auc_roc": 0.19480519480519476,
+      "pr_auc": 0.030883727802360445,
+      "n_recesiones_test": 3,
+      "recall": 0.6666666666666666,
+      "f1_score": 0.05970149253731343,
+      "n_recesiones_pred": 64
+    },
+    {
+      "fold": 2,
+      "nombre": "Fold 2",
+      "train_start": "1967-01-31",
+      "train_end": "1988-04-30",
+      "test_start": "1989-05-31",
+      "test_end": "1995-12-31",
+      "train_size": 256,
+      "test_size": 80,
+      "umbral_optimo": 0.7085698889589669,
+      "auc_roc": 0.9548611111111112,
+      "pr_auc": 0.5459821428571429,
+      "n_recesiones_test": 8,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_recesiones_pred": 0
+    },
+    {
+      "fold": 3,
+      "nombre": "Fold 3",
+      "train_start": "1967-01-31",
+      "train_end": "1995-12-31",
+      "test_start": "1997-01-31",
+      "test_end": "2003-08-31",
+      "train_size": 348,
+      "test_size": 80,
+      "umbral_optimo": 0.6229151464794312,
+      "auc_roc": 0.9913194444444445,
+      "pr_auc": 0.906795634920635,
+      "n_recesiones_test": 8,
+      "recall": 1.0,
+      "f1_score": 0.26666666666666666,
+      "n_recesiones_pred": 52
+    },
+    {
+      "fold": 4,
+      "nombre": "Fold 4",
+      "train_start": "1967-01-31",
+      "train_end": "2003-08-31",
+      "test_start": "2004-09-30",
+      "test_end": "2011-04-30",
+      "train_size": 440,
+      "test_size": 80,
+      "umbral_optimo": 0.5915692726555768,
+      "auc_roc": 0.9910394265232975,
+      "pr_auc": 0.9755291005291005,
+      "n_recesiones_test": 18,
+      "recall": 1.0,
+      "f1_score": 0.7659574468085106,
+      "n_recesiones_pred": 29
+    }
+  ],
+  "aggregated": {
+    "recall_mean": 0.6666666666666666,
+    "recall_std": 0.408248290463863,
+    "f1_mean": 0.27308140150312266,
+    "f1_std": 0.3012774395204807,
+    "auc_roc_mean": 0.783006294221012,
+    "auc_roc_std": 0.3399215954208471,
+    "pr_auc_mean": 0.6147976515273097,
+    "pr_auc_std": 0.37452671638953206
+  },
+  "overall": {
+    "recall": 0.7567567567567568,
+    "f1_score": 0.3076923076923077,
+    "auc_roc": 0.6555247827332633,
+    "pr_auc": 0.15294702441194338,
+    "confusion_matrix": [
+      [
+        166,
+        117
+      ],
+      [
+        9,
+        28
+      ]
+    ]
+  }
+}
