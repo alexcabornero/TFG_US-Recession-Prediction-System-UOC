@@ -1,0 +1,144 @@
+{
+  "modelo": "LGBMClassifier",
+  "rebalanceo": "balanced",
+  "n_folds": 4,
+  "umbral_optimo": 0.11950988020613484,
+  "n_iter_random_search": 30,
+  "n_splits_inner": 3,
+  "folds": [
+    {
+      "fold": 1,
+      "nombre": "Fold 1",
+      "train_start": "1967-01-31",
+      "train_end": "1980-08-31",
+      "test_start": "1981-09-30",
+      "test_end": "1988-04-30",
+      "train_size": 164,
+      "test_size": 80,
+      "umbral_optimo": 0.06608172089648218,
+      "auc_roc": 0.5238095238095238,
+      "pr_auc": 0.0647673314339981,
+      "n_recesiones_test": 3,
+      "best_params": {
+        "classifier__reg_lambda": 1,
+        "classifier__reg_alpha": 0,
+        "classifier__num_leaves": 31,
+        "classifier__n_estimators": 300,
+        "classifier__min_child_samples": 20,
+        "classifier__max_depth": 3,
+        "classifier__learning_rate": 0.1
+      },
+      "cv_best_score": 0.7800694474607518,
+      "recall": 1.0,
+      "f1_score": 0.08,
+      "n_recesiones_pred": 72
+    },
+    {
+      "fold": 2,
+      "nombre": "Fold 2",
+      "train_start": "1967-01-31",
+      "train_end": "1988-04-30",
+      "test_start": "1989-05-31",
+      "test_end": "1995-12-31",
+      "train_size": 256,
+      "test_size": 80,
+      "umbral_optimo": 0.09088877210691677,
+      "auc_roc": 0.9019097222222222,
+      "pr_auc": 0.4173295454545455,
+      "n_recesiones_test": 8,
+      "best_params": {
+        "classifier__reg_lambda": 5,
+        "classifier__reg_alpha": 0,
+        "classifier__num_leaves": 31,
+        "classifier__n_estimators": 200,
+        "classifier__min_child_samples": 10,
+        "classifier__max_depth": 5,
+        "classifier__learning_rate": 0.05
+      },
+      "cv_best_score": 0.4737261321403703,
+      "recall": 0.75,
+      "f1_score": 0.4444444444444444,
+      "n_recesiones_pred": 19
+    },
+    {
+      "fold": 3,
+      "nombre": "Fold 3",
+      "train_start": "1967-01-31",
+      "train_end": "1995-12-31",
+      "test_start": "1997-01-31",
+      "test_end": "2003-08-31",
+      "train_size": 348,
+      "test_size": 80,
+      "umbral_optimo": 0.5125487838464211,
+      "auc_roc": 0.9505208333333334,
+      "pr_auc": 0.7403846153846154,
+      "n_recesiones_test": 8,
+      "best_params": {
+        "classifier__reg_lambda": 5,
+        "classifier__reg_alpha": 0.1,
+        "classifier__num_leaves": 15,
+        "classifier__n_estimators": 200,
+        "classifier__min_child_samples": 30,
+        "classifier__max_depth": 4,
+        "classifier__learning_rate": 0.01
+      },
+      "cv_best_score": 0.4096710163659316,
+      "recall": 1.0,
+      "f1_score": 0.3018867924528302,
+      "n_recesiones_pred": 45
+    },
+    {
+      "fold": 4,
+      "nombre": "Fold 4",
+      "train_start": "1967-01-31",
+      "train_end": "2003-08-31",
+      "test_start": "2004-09-30",
+      "test_end": "2011-04-30",
+      "train_size": 440,
+      "test_size": 80,
+      "umbral_optimo": 0.14813098830535293,
+      "auc_roc": 0.7916666666666667,
+      "pr_auc": 0.4852945634836423,
+      "n_recesiones_test": 18,
+      "best_params": {
+        "classifier__reg_lambda": 1,
+        "classifier__reg_alpha": 0,
+        "classifier__num_leaves": 15,
+        "classifier__n_estimators": 200,
+        "classifier__min_child_samples": 20,
+        "classifier__max_depth": 4,
+        "classifier__learning_rate": 0.05
+      },
+      "cv_best_score": 0.6808933480292594,
+      "recall": 1.0,
+      "f1_score": 0.46153846153846156,
+      "n_recesiones_pred": 60
+    }
+  ],
+  "aggregated": {
+    "recall_mean": 0.9375,
+    "recall_std": 0.10825317547305482,
+    "f1_mean": 0.321967424608934,
+    "f1_std": 0.15283337421603999,
+    "auc_roc_mean": 0.7919766865079365,
+    "auc_roc_std": 0.16517811757007217,
+    "pr_auc_mean": 0.42694401393920034,
+    "pr_auc_std": 0.24130591819375172
+  },
+  "overall": {
+    "recall": 0.9459459459459459,
+    "f1_score": 0.30042918454935624,
+    "auc_roc": 0.7943367395664216,
+    "pr_auc": 0.34117410584889585,
+    "confusion_matrix": [
+      [
+        122,
+        161
+      ],
+      [
+        2,
+        35
+      ]
+    ]
+  }
+}
