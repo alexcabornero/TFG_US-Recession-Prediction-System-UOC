@@ -1,0 +1,132 @@
+{
+  "modelo": "RandomForestClassifier",
+  "rebalanceo": "balanced",
+  "n_folds": 4,
+  "umbral_optimo": 0.5999418563290286,
+  "n_iter_random_search": 20,
+  "n_splits_inner": 3,
+  "folds": [
+    {
+      "fold": 1,
+      "nombre": "Fold 1",
+      "train_start": "1967-01-31",
+      "train_end": "1980-08-31",
+      "test_start": "1981-09-30",
+      "test_end": "1988-04-30",
+      "train_size": 164,
+      "test_size": 80,
+      "umbral_optimo": 0.756031883277294,
+      "auc_roc": 0.4921752738654147,
+      "pr_auc": 0.13115796662105714,
+      "n_recesiones_test": 9,
+      "best_params": {
+        "classifier__n_estimators": 100,
+        "classifier__min_samples_split": 5,
+        "classifier__min_samples_leaf": 2,
+        "classifier__max_depth": null
+      },
+      "cv_best_score": 0.7107692307692308,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_recesiones_pred": 0
+    },
+    {
+      "fold": 2,
+      "nombre": "Fold 2",
+      "train_start": "1967-01-31",
+      "train_end": "1988-04-30",
+      "test_start": "1989-05-31",
+      "test_end": "1995-12-31",
+      "train_size": 256,
+      "test_size": 80,
+      "umbral_optimo": 0.45789576449444525,
+      "auc_roc": 0.9305555555555555,
+      "pr_auc": 0.5393639346764347,
+      "n_recesiones_test": 8,
+      "best_params": {
+        "classifier__n_estimators": 300,
+        "classifier__min_samples_split": 10,
+        "classifier__min_samples_leaf": 4,
+        "classifier__max_depth": 15
+      },
+      "cv_best_score": 0.3996890257998266,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_recesiones_pred": 0
+    },
+    {
+      "fold": 3,
+      "nombre": "Fold 3",
+      "train_start": "1967-01-31",
+      "train_end": "1995-12-31",
+      "test_start": "1997-01-31",
+      "test_end": "2003-08-31",
+      "train_size": 348,
+      "test_size": 80,
+      "umbral_optimo": 0.7419879481636119,
+      "auc_roc": 0.921875,
+      "pr_auc": 0.46748394268774707,
+      "n_recesiones_test": 8,
+      "best_params": {
+        "classifier__n_estimators": 300,
+        "classifier__min_samples_split": 5,
+        "classifier__min_samples_leaf": 1,
+        "classifier__max_depth": 10
+      },
+      "cv_best_score": 0.693450275259419,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_recesiones_pred": 0
+    },
+    {
+      "fold": 4,
+      "nombre": "Fold 4",
+      "train_start": "1967-01-31",
+      "train_end": "2003-08-31",
+      "test_start": "2004-09-30",
+      "test_end": "2011-04-30",
+      "train_size": 440,
+      "test_size": 80,
+      "umbral_optimo": 0.32552066077154834,
+      "auc_roc": 0.5613799283154122,
+      "pr_auc": 0.24015109701133713,
+      "n_recesiones_test": 18,
+      "best_params": {
+        "classifier__n_estimators": 100,
+        "classifier__min_samples_split": 5,
+        "classifier__min_samples_leaf": 2,
+        "classifier__max_depth": null
+      },
+      "cv_best_score": 0.46796133959796066,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_recesiones_pred": 0
+    }
+  ],
+  "aggregated": {
+    "recall_mean": 0.0,
+    "recall_std": 0.0,
+    "f1_mean": 0.0,
+    "f1_std": 0.0,
+    "auc_roc_mean": 0.7264964394340956,
+    "auc_roc_std": 0.2012354191479147,
+    "pr_auc_mean": 0.34453923524914404,
+    "pr_auc_std": 0.16545430925196924
+  },
+  "overall": {
+    "recall": 0.0,
+    "f1_score": 0.0,
+    "auc_roc": 0.7237007807908655,
+    "pr_auc": 0.2448385245316036,
+    "confusion_matrix": [
+      [
+        277,
+        0
+      ],
+      [
+        43,
+        0
+      ]
+    ]
+  }
+}

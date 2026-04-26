@@ -126,7 +126,7 @@ class BaselineModel:
         Returns:
             Diccionario con métricas agregadas y por fold
         """
-        # Fechas de corte cargadas desde walk_forward_config (fuente de verdad única).
+        # Fechas de corte cargadas desde walk_forward_config
         # El hold-out se evalúa por separado en `evaluar_hold_out`, solo tras la
         # selección del modelo ganador final.
         fechas_corte = FECHAS_CORTE[:n_folds]
@@ -430,8 +430,7 @@ class BaselineModel:
         Evalúa el modelo sobre el hold-out intocable, segmentado en sub-ventanas.
 
         Estructura del hold-out:
-        - Expansión pura: may 2011 — feb 2020. Mide especificidad vía
-          `false_alarm_rate`. Principal indicador de fiabilidad fuera de recesión.
+        - Expansión: may 2011 — feb 2020. 
         - COVID: mar-abr 2020. Reportado como caso de estudio separado porque
           es un shock exógeno (pandemia) no anticipable por indicadores macro
           clásicos (yield spread, credit spread) a 12 meses.
@@ -449,22 +448,19 @@ class BaselineModel:
 
         Returns:
             Diccionario con claves 'expansion', 'covid' y 'global', cada una con
-            sus métricas; además de la nota explicativa sobre el COVID.
+            sus métricas
         """
         print(f"\n{'='*70}")
         print("EVALUACIÓN HOLD-OUT (segmentado)")
         print(f"{'='*70}")
-        print("⚠️  Este conjunto solo debe usarse para la evaluación final del "
-              "modelo ganador.")
 
         if self.modelo is None:
-            print("⚠️  No hay modelo entrenado. Ejecuta entrenar_final primero.")
+            print("No hay modelo entrenado. Ejecuta entrenar_final primero.")
             return {}
 
         inicio = pd.Timestamp(fecha_inicio)
         inicio_covid = pd.Timestamp(fecha_inicio_covid)
         fin_covid = pd.Timestamp(fecha_fin_covid)
-        # Permite pasar strings o Timestamps indistintamente.
 
         mascara_hold = X.index >= inicio
         X_hold, y_hold = X[mascara_hold], y[mascara_hold]
