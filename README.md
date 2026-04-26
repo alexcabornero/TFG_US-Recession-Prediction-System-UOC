@@ -49,10 +49,30 @@ Una vez configurado el entorno, puede ejecutar todo el flujo de Ingeniería de D
 
 ---
 
+## 3. Ejecución del Modelado (Hito 2)
+
+Instrucciones para ejecutar los scripts del Hito 2 en orden:
+
+1. `python modulo_2_modelado/baseline.py`
+2. `python modulo_2_modelado/random_forest.py`
+3. `python modulo_2_modelado/xgboost_model.py`
+4. `python modulo_2_modelado/lightgbm_model.py`
+5. `python modulo_2_modelado/comparativa_modelos.py`
+6. `python modulo_2_modelado/serializar_modelo_final.py`
+7. `python modulo_2_modelado/shap_analysis.py`
+
+> [!NOTE]
+> Todos los scripts comparten la configuración de folds desde `walk_forward_config.py` y los resultados se guardan en `models/` y `docs/figures/`.
+
+---
+
 ## Estructura del Proyecto
 
 - `module_1_data/`: Adquisición y preprocesamiento de datos.
+- `modulo_2_modelado/`: Modelado, validación walk-forward y análisis de explicabilidad
 - `data/`: Almacenamiento de datos brutos y procesados.
+- `models/`: Modelos serializados, métricas y artefactos reproducibles
+- `docs/`: Figuras, tablas comparativas y documentación
 
 > [!NOTE]
 > Este proyecto tiene fines exclusivamente académicos y no constituye asesoramiento financiero.
