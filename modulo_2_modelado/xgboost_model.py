@@ -1,16 +1,11 @@
 """
-Modelo Random Forest
+Modelo XGBoost
 
-Replica la plantilla del baseline (mismo walk-forward, mismo threshold tuning,
-misma ablación de rebalanceo) añadiendo optimización anidada de hiperparámetros
-mediante `RandomizedSearchCV` con `TimeSeriesSplit` interno sobre el train de
-cada fold externo. El test externo nunca interviene en la búsqueda.
-
-Incluye:
-- Pipeline de imblearn con StandardScaler + (SMOTE opcional) + RandomForestClassifier
-- Walk-Forward CV de 4 folds reutilizando las fechas de `walk_forward_config`
-- Tuning anidado: `RandomizedSearchCV(n_iter=20, cv=TimeSeriesSplit(3), scoring='average_precision')`
-- Umbral óptimo mediano sobre curva PR del train de cada fold
+Replica exactamente el protocolo de `random_forest.py`:
+- Pipeline de imblearn con StandardScaler + (SMOTE opcional) + XGBClassifier
+- Walk-Forward CV de 4 folds externos (fuente: `walk_forward_config.FECHAS_CORTE`)
+- Tuning anidado: `RandomizedSearchCV(n_iter=30, scoring='average_precision')`
+  con `TimeSeriesSplit(n_splits=3)` interno sobre el train de cada fold
 - Ablación de las tres condiciones de rebalanceo ('none', 'balanced', 'smote')
 """
 
@@ -23,16 +18,14 @@ warnings.filterwarnings('ignore')
 
 from typing import Dict, List
 
-import joblib
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.base import clone
 from sklearn.metrics import (
     auc,
     average_precision_score,
@@ -43,9 +36,9 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from sklearn.base import clone
 from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
 from sklearn.preprocessing import StandardScaler
+from xgboost import XGBClassifier
 
 from baseline import cargar_dataset
 from walk_forward_config import (
@@ -57,32 +50,28 @@ from walk_forward_config import (
 
 
 PARAM_DISTRIBUTIONS: Dict[str, List] = {
-    'classifier__n_estimators': [100, 200, 300, 500],
-    'classifier__max_depth': [None, 5, 10, 15, 20],
-    'classifier__min_samples_split': [2, 5, 10],
-    'classifier__min_samples_leaf': [1, 2, 4],
+    'classifier__n_estimators': [200, 300, 500],
+    'classifier__learning_rate': [0.01, 0.05, 0.1],
+    'classifier__max_depth': [3, 4, 5],
+    'classifier__subsample': [0.6, 0.7, 0.8],
+    'classifier__colsample_bytree': [0.6, 0.7, 0.8],
+    'classifier__reg_alpha': [0, 0.1, 0.5],
+    'classifier__reg_lambda': [1, 2, 5],
 }
 
 
-class RandomForestModel:
+class XGBoostModel:
     """
-    Random Forest con walk-forward CV externo y RandomizedSearchCV interno.
+    XGBoost con walk-forward CV externo y RandomizedSearchCV interno.
     """
 
     def __init__(
         self,
         random_state: int = 42,
         rebalanceo: str = 'balanced',
-        n_iter: int = 20,
+        n_iter: int = 30,
         n_splits_inner: int = 3,
     ):
-        """
-        Args:
-            random_state: Semilla para reproducibilidad.
-            rebalanceo: 'none' | 'balanced' | 'smote'.
-            n_iter: Nº de combinaciones aleatorias en RandomizedSearchCV.
-            n_splits_inner: Nº de splits del TimeSeriesSplit interno.
-        """
         if rebalanceo not in set(CONDICIONES_REBALANCEO):
             raise ValueError(
                 f"rebalanceo debe ser uno de {CONDICIONES_REBALANCEO}; "
@@ -92,22 +81,27 @@ class RandomForestModel:
         self.rebalanceo = rebalanceo
         self.n_iter = n_iter
         self.n_splits_inner = n_splits_inner
-        self.modelo = None
         self.metricas: Dict = {}
         self.umbral_optimo = 0.5
         self.mejor_fold = None
         self.metricas_por_fold: List[Dict] = []
 
-    def construir_pipeline(self) -> Pipeline:
+    def construir_pipeline(self, scale_pos_weight: float = 1.0) -> Pipeline:
         """
         Construye el pipeline según `self.rebalanceo`.
 
-        Pipeline según rebalanceo. StandardScaler siempre. SMOTE lo necesita; coste despreciable para RF.
+        Args:
+            scale_pos_weight: solo se usa realmente en condición 'balanced',
+                En 'none' y 'smote' debe mantenerse en 1.0 para no duplicar la
+                compensación del desbalanceo.
         """
-        class_weight = 'balanced' if self.rebalanceo == 'balanced' else None
-        clasificador = RandomForestClassifier(
+        # n_jobs=1: evita deadlock por oversubscription entre joblib (n_jobs=-1 en RandomizedSearchCV)
+        # y el multithreading interno de XGBoost
+        clasificador = XGBClassifier(
             random_state=self.random_state,
-            class_weight=class_weight,
+            eval_metric='aucpr',
+            scale_pos_weight=scale_pos_weight,
+            n_jobs=1,
         )
         pasos = [('scaler', StandardScaler())]
         if self.rebalanceo == 'smote':
@@ -117,8 +111,8 @@ class RandomForestModel:
 
     def walk_forward_cv(self, X: pd.DataFrame, y: pd.Series, n_folds: int = 4) -> Dict:
         """
-        Walk-Forward CV externo + RandomizedSearchCV interno sobre el train
-        de cada fold. El test externo solo se usa para reportar métricas.
+        Walk-Forward CV externo + RandomizedSearchCV interno. Test externo solo
+        para métricas finales — nunca para tuning ni para cálculo de umbral.
         """
         fechas_corte = FECHAS_CORTE[:n_folds]
         metricas_por_fold: List[Dict] = []
@@ -131,7 +125,14 @@ class RandomForestModel:
             if len(X_train) == 0 or len(X_test) == 0:
                 continue
 
-            pipeline = self.construir_pipeline()
+            if self.rebalanceo == 'balanced':
+                n_positivos = int(y_train.sum())
+                n_negativos = len(y_train) - n_positivos
+                scale_pos_weight = n_negativos / max(1, n_positivos)
+            else:
+                scale_pos_weight = 1.0
+
+            pipeline = self.construir_pipeline(scale_pos_weight=scale_pos_weight)
             tscv_interno = TimeSeriesSplit(n_splits=self.n_splits_inner)
             busqueda = RandomizedSearchCV(
                 estimator=pipeline,
@@ -146,7 +147,7 @@ class RandomForestModel:
             busqueda.fit(X_train, y_train)
             mejor_pipeline = busqueda.best_estimator_
 
-            # Umbral OOF: RF satura probabilidades in-sample → umbral no transferible al test.
+            # Umbral OOF: XGBoost satura probabilidades in-sample → umbral no transferible al test.
             # OOF manual con TimeSeriesSplit (cross_val_predict no cubre todas las muestras).
             y_proba_oof = np.full(len(y_train), np.nan)
             for idx_entrenamiento, idx_validacion in TimeSeriesSplit(
@@ -195,6 +196,7 @@ class RandomForestModel:
                 'auc_roc': auc_roc,
                 'pr_auc': pr_auc,
                 'n_recesiones_test': int(y_test.sum()),
+                'scale_pos_weight': float(scale_pos_weight),
                 'best_params': {k: v for k, v in busqueda.best_params_.items()},
                 'cv_best_score': float(busqueda.best_score_),
                 'y_test': y_test.values,
@@ -229,7 +231,7 @@ class RandomForestModel:
             'umbrales_tr', 'pipeline',
         }
         self.metricas = {
-            'modelo': 'RandomForestClassifier',
+            'modelo': 'XGBClassifier',
             'rebalanceo': self.rebalanceo,
             'n_folds': len(metricas_por_fold),
             'umbral_optimo': self.umbral_optimo,
@@ -338,24 +340,6 @@ class RandomForestModel:
             json.dump(self.metricas, f, indent=2)
         return ruta
 
-    def entrenar_final(self, X: pd.DataFrame, y: pd.Series, best_params: Dict) -> Pipeline:
-        """
-        Entrena el pipeline final sobre todo el tramo pre-hold-out con los
-        mejores hiperparámetros del fold ganador.
-        """
-        pipeline = self.construir_pipeline()
-        pipeline.set_params(**best_params)
-        pipeline.fit(X, y)
-        self.modelo = pipeline
-        return pipeline
-
-    def guardar_modelo(self, ruta: str) -> str:
-        if self.modelo is None:
-            raise RuntimeError("No hay modelo entrenado. Ejecuta entrenar_final primero.")
-        os.makedirs(os.path.dirname(ruta), exist_ok=True)
-        joblib.dump(self.modelo, ruta)
-        return ruta
-
 
 def _ejecutar_target(
     etiqueta: str,
@@ -364,9 +348,9 @@ def _ejecutar_target(
     ruta_metricas: str,
     ruta_roc_pr: str,
     ruta_pr_train: str,
-) -> RandomForestModel:
-    """Ejecuta el CV, guarda artefactos y muestra el resumen compacto."""
-    modelo = RandomForestModel(random_state=42, rebalanceo='balanced')
+) -> XGBoostModel:
+    """Ejecuta el CV sobre la condición 'balanced' y muestra resumen compacto."""
+    modelo = XGBoostModel(random_state=42, rebalanceo='balanced')
     metricas = modelo.walk_forward_cv(X, y, n_folds=4)
     modelo.guardar_metricas(ruta_metricas)
     modelo.visualizar_curvas_roc_pr(guardar_ruta=ruta_roc_pr)
@@ -393,7 +377,7 @@ def _ablacion_target(etiqueta: str, X: pd.DataFrame, y: pd.Series) -> Dict:
     """Ejecuta las 3 condiciones de rebalanceo sobre los mismos folds."""
     resultados: Dict[str, Dict[str, float]] = {}
     for cond in CONDICIONES_REBALANCEO:
-        modelo = RandomForestModel(random_state=42, rebalanceo=cond)
+        modelo = XGBoostModel(random_state=42, rebalanceo=cond)
         m = modelo.walk_forward_cv(X, y, n_folds=4)
         ag = m['aggregated']
         resultados[cond] = {
@@ -418,133 +402,30 @@ def _ablacion_target(etiqueta: str, X: pd.DataFrame, y: pd.Series) -> Dict:
     return resultados
 
 
-class BalancedRandomForestModel(RandomForestModel):
-    """
-    Variante que usa `BalancedRandomForestClassifier` de imblearn, que integra
-    el submuestreo de la clase mayoritaria dentro del bootstrap de cada árbol.
-    No requiere ablación de rebalanceo: el balanceo está embebido en el
-    clasificador. Mantiene el resto de la pipeline y protocolo del RF estándar.
-    """
-
-    def __init__(
-        self,
-        random_state: int = 42,
-        n_iter: int = 20,
-        n_splits_inner: int = 3,
-    ):
-        super().__init__(
-            random_state=random_state,
-            rebalanceo='none',
-            n_iter=n_iter,
-            n_splits_inner=n_splits_inner,
-        )
-
-    def construir_pipeline(self) -> Pipeline:
-        """StandardScaler -> BalancedRandomForestClassifier (sin SMOTE, sin class_weight)."""
-        clasificador = BalancedRandomForestClassifier(
-            random_state=self.random_state,
-            sampling_strategy='all',
-            replacement=True,
-            bootstrap=False,
-        )
-        return Pipeline([
-            ('scaler', StandardScaler()),
-            ('classifier', clasificador),
-        ])
-
-
-def _ejecutar_balanced_rf(X: pd.DataFrame, y_12m: pd.Series) -> None:
-    """
-    Entrena BalancedRandomForestClassifier sobre target_12m con el mismo
-    protocolo (walk-forward, tuning anidado, umbral OOF) que el RF estándar.
-    Una sola condición. Si supera PR-AUC 0.615 del baseline, serializa.
-    """
-    modelo = BalancedRandomForestModel(random_state=42)
-    metricas = modelo.walk_forward_cv(X, y_12m, n_folds=4)
-    modelo.guardar_metricas("models/random_forest_balanced_metrics_12m.json")
-    modelo.visualizar_curvas_roc_pr(
-        guardar_ruta="docs/figures/random_forest_balanced_12m_roc_pr.png"
-    )
-    modelo.visualizar_pr_train_por_fold(
-        guardar_ruta="docs/figures/random_forest_balanced_12m_pr_train_por_fold.png"
-    )
-
-    print("\n" + "=" * 64)
-    print("BALANCED RANDOM FOREST (TARGET 12M)")
-    print("=" * 64)
-    for fold in metricas['folds']:
-        print(
-            f"{fold['nombre']}  "
-            f"Train: {fold['train_start'][:7]} \u2192 {fold['train_end'][:7]}  |  "
-            f"Test: {fold['test_start'][:7]} \u2192 {fold['test_end'][:7]}  |  "
-            f"AUC-ROC: {fold['auc_roc']:.3f}  PR-AUC: {fold['pr_auc']:.3f}"
-        )
-    ag = metricas['aggregated']
-    print(
-        f"Umbral mediano: {metricas['umbral_optimo']:.3f}  |  "
-        f"Recall: {ag['recall_mean']:.3f}  F1: {ag['f1_mean']:.3f}  "
-        f"AUC-ROC: {ag['auc_roc_mean']:.3f}  PR-AUC: {ag['pr_auc_mean']:.3f}"
-    )
-
-    with open("models/random_forest_metrics_12m.json", 'r') as f:
-        rf_std = json.load(f)
-    ag_std = rf_std['aggregated']
-    print("\nComparativa target_12m (PR-AUC | AUC-ROC | Recall | F1):")
-    print(
-        f"  Baseline LR    {0.615:.3f} | {0.783:.3f} | {0.667:.3f} | {0.273:.3f}"
-    )
-    print(
-        f"  RF balanced    {ag_std['pr_auc_mean']:.3f} | "
-        f"{ag_std['auc_roc_mean']:.3f} | {ag_std['recall_mean']:.3f} | "
-        f"{ag_std['f1_mean']:.3f}"
-    )
-    print(
-        f"  BalancedRF     {ag['pr_auc_mean']:.3f} | "
-        f"{ag['auc_roc_mean']:.3f} | {ag['recall_mean']:.3f} | "
-        f"{ag['f1_mean']:.3f}"
-    )
-
-    if ag['pr_auc_mean'] > 0.615:
-        mejores_params = modelo.mejor_fold['best_params']
-        mascara = X.index < HOLDOUT_START
-        modelo.entrenar_final(X[mascara], y_12m[mascara], best_params=mejores_params)
-        modelo.guardar_modelo("models/random_forest_balanced.pkl")
-        print(
-            f"\n[OK] PR-AUC {ag['pr_auc_mean']:.3f} > 0.615 (baseline). "
-            f"Modelo serializado en models/random_forest_balanced.pkl "
-            f"con hiperparámetros {mejores_params}"
-        )
-    else:
-        print(
-            f"\n[X] PR-AUC {ag['pr_auc_mean']:.3f} <= 0.615 (baseline). "
-            f"No se serializa."
-        )
-
-
 if __name__ == "__main__":
     X, y_6m, y_12m = cargar_dataset()
     os.makedirs("docs/figures", exist_ok=True)
 
     print("=" * 64)
-    print("RANDOM FOREST")
+    print("XGBOOST")
     print("=" * 64)
 
     _ejecutar_target(
         etiqueta="TARGET 6M",
         X=X,
         y=y_6m,
-        ruta_metricas="models/random_forest_metrics_6m.json",
-        ruta_roc_pr="docs/figures/random_forest_6m_roc_pr.png",
-        ruta_pr_train="docs/figures/random_forest_6m_pr_train_por_fold.png",
+        ruta_metricas="models/xgboost_metrics_6m.json",
+        ruta_roc_pr="docs/figures/xgboost_6m_roc_pr.png",
+        ruta_pr_train="docs/figures/xgboost_6m_pr_train_por_fold.png",
     )
 
     _ejecutar_target(
         etiqueta="TARGET 12M",
         X=X,
         y=y_12m,
-        ruta_metricas="models/random_forest_metrics_12m.json",
-        ruta_roc_pr="docs/figures/random_forest_12m_roc_pr.png",
-        ruta_pr_train="docs/figures/random_forest_12m_pr_train_por_fold.png",
+        ruta_metricas="models/xgboost_metrics_12m.json",
+        ruta_roc_pr="docs/figures/xgboost_12m_roc_pr.png",
+        ruta_pr_train="docs/figures/xgboost_12m_pr_train_por_fold.png",
     )
 
     ablacion = {
@@ -552,7 +433,5 @@ if __name__ == "__main__":
         'target_12m': _ablacion_target('target_12m', X, y_12m),
     }
     os.makedirs("models", exist_ok=True)
-    with open("models/random_forest_ablacion.json", 'w') as f:
+    with open("models/xgboost_ablacion.json", 'w') as f:
         json.dump(ablacion, f, indent=2, default=str)
-
-    _ejecutar_balanced_rf(X, y_12m)
