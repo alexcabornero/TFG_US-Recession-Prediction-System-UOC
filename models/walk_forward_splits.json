@@ -1,0 +1,128 @@
+{
+  "gap_meses": 12,
+  "folds": [
+    {
+      "nombre": "Fold 1",
+      "train_start": "1967-01-31",
+      "train_end": "1980-08-31",
+      "test_start": "1981-09-30",
+      "test_end": "1988-04-30",
+      "train_size": 164,
+      "test_size": 80,
+      "target_6m": {
+        "train_pos": 33,
+        "train_neg": 131,
+        "test_pos": 9,
+        "test_neg": 71
+      },
+      "target_12m": {
+        "train_pos": 34,
+        "train_neg": 130,
+        "test_pos": 3,
+        "test_neg": 77
+      }
+    },
+    {
+      "nombre": "Fold 2",
+      "train_start": "1967-01-31",
+      "train_end": "1988-04-30",
+      "test_start": "1989-05-31",
+      "test_end": "1995-12-31",
+      "train_size": 256,
+      "test_size": 80,
+      "target_6m": {
+        "train_pos": 49,
+        "train_neg": 207,
+        "test_pos": 8,
+        "test_neg": 72
+      },
+      "target_12m": {
+        "train_pos": 49,
+        "train_neg": 207,
+        "test_pos": 8,
+        "test_neg": 72
+      }
+    },
+    {
+      "nombre": "Fold 3",
+      "train_start": "1967-01-31",
+      "train_end": "1995-12-31",
+      "test_start": "1997-01-31",
+      "test_end": "2003-08-31",
+      "train_size": 348,
+      "test_size": 80,
+      "target_6m": {
+        "train_pos": 57,
+        "train_neg": 291,
+        "test_pos": 8,
+        "test_neg": 72
+      },
+      "target_12m": {
+        "train_pos": 57,
+        "train_neg": 291,
+        "test_pos": 8,
+        "test_neg": 72
+      }
+    },
+    {
+      "nombre": "Fold 4",
+      "train_start": "1967-01-31",
+      "train_end": "2003-08-31",
+      "test_start": "2004-09-30",
+      "test_end": "2011-04-30",
+      "train_size": 440,
+      "test_size": 80,
+      "target_6m": {
+        "train_pos": 65,
+        "train_neg": 375,
+        "test_pos": 18,
+        "test_neg": 62
+      },
+      "target_12m": {
+        "train_pos": 65,
+        "train_neg": 375,
+        "test_pos": 18,
+        "test_neg": 62
+      }
+    }
+  ],
+  "holdout": {
+    "start": "2011-05-31",
+    "end": "2025-01-31",
+    "size": 165,
+    "target_6m": {
+      "pos": 2,
+      "neg": 163
+    },
+    "target_12m": {
+      "pos": 2,
+      "neg": 163
+    }
+  },
+  "holdout_expansion": {
+    "start": "2011-05-31",
+    "end": "2020-02-29",
+    "size": 106,
+    "target_6m": {
+      "pos": 2,
+      "neg": 104
+    },
+    "target_12m": {
+      "pos": 2,
+      "neg": 104
+    }
+  },
+  "holdout_covid": {
+    "start": "2020-03-31",
+    "end": "2020-04-30",
+    "size": 2,
+    "target_6m": {
+      "pos": 0,
+      "neg": 2
+    },
+    "target_12m": {
+      "pos": 0,
+      "neg": 2
+    }
+  }
+}
