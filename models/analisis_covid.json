@@ -1,0 +1,238 @@
+{
+  "resumen": {
+    "ventana_inicio": "2018-01-31",
+    "ventana_fin": "2020-02-29",
+    "n_observaciones": 26,
+    "umbral": 0.6543427530031798,
+    "positivos_target_12m": {
+      "n": 2,
+      "fechas": [
+        "2019-03-31",
+        "2019-04-30"
+      ],
+      "proba_media": 0.22325,
+      "proba_max": 0.2535,
+      "proba_min": 0.193,
+      "detectados": 0,
+      "no_detectados": 2
+    },
+    "negativos_target_12m": {
+      "n": 24,
+      "proba_media": 0.18295416666666667,
+      "proba_max": 0.3319,
+      "falsos_positivos": 0
+    },
+    "max_proba_global_ventana": 0.3319,
+    "fecha_max_proba": "2018-07-31"
+  },
+  "tabla_mensual": [
+    {
+      "fecha": "2018-01-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0725,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.5819
+    },
+    {
+      "fecha": "2018-02-28",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0694,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.5849
+    },
+    {
+      "fecha": "2018-03-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.1428,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.5115
+    },
+    {
+      "fecha": "2018-04-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2006,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4538
+    },
+    {
+      "fecha": "2018-05-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2453,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.409
+    },
+    {
+      "fecha": "2018-06-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2753,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.3791
+    },
+    {
+      "fecha": "2018-07-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.3319,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.3224
+    },
+    {
+      "fecha": "2018-08-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2193,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.435
+    },
+    {
+      "fecha": "2018-09-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2478,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4065
+    },
+    {
+      "fecha": "2018-10-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2471,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4073
+    },
+    {
+      "fecha": "2018-11-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2065,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4478
+    },
+    {
+      "fecha": "2018-12-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.3112,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.3431
+    },
+    {
+      "fecha": "2019-01-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2611,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.3932
+    },
+    {
+      "fecha": "2019-02-28",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2877,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.3667
+    },
+    {
+      "fecha": "2019-03-31",
+      "target_12m_real": 1,
+      "proba_recesion": 0.2535,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4008
+    },
+    {
+      "fecha": "2019-04-30",
+      "target_12m_real": 1,
+      "proba_recesion": 0.193,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4613
+    },
+    {
+      "fecha": "2019-05-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2144,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.44
+    },
+    {
+      "fecha": "2019-06-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.2642,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.3902
+    },
+    {
+      "fecha": "2019-07-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.1616,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4927
+    },
+    {
+      "fecha": "2019-08-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.1651,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4893
+    },
+    {
+      "fecha": "2019-09-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.1785,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.4759
+    },
+    {
+      "fecha": "2019-10-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0968,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.5576
+    },
+    {
+      "fecha": "2019-11-30",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0594,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.595
+    },
+    {
+      "fecha": "2019-12-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0334,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.621
+    },
+    {
+      "fecha": "2020-01-31",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0401,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.6143
+    },
+    {
+      "fecha": "2020-02-29",
+      "target_12m_real": 0,
+      "proba_recesion": 0.0589,
+      "umbral": 0.6543427530031798,
+      "prediccion": 0,
+      "distancia_umbral": -0.5954
+    }
+  ]
+}

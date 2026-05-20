@@ -1,0 +1,73 @@
+{
+  "umbral_usado": 0.6543427530031798,
+  "expansion": {
+    "fecha_inicio": "2011-05-31",
+    "fecha_fin": "2020-02-29",
+    "n_observaciones": 106,
+    "n_recesiones_real": 2,
+    "n_recesiones_pred": 0,
+    "recall": 0.0,
+    "f1_score": 0.0,
+    "auc_roc": 0.9086538461538461,
+    "pr_auc": 0.1380952380952381,
+    "false_alarm_rate": 0.0,
+    "confusion_matrix": [
+      [
+        104,
+        0
+      ],
+      [
+        2,
+        0
+      ]
+    ],
+    "umbral_usado": 0.6543427530031798
+  },
+  "covid": {
+    "fecha_inicio": "2020-03-31",
+    "fecha_fin": "2020-04-30",
+    "n_observaciones": 2,
+    "n_recesiones_real": 0,
+    "n_recesiones_pred": 0,
+    "recall": 0.0,
+    "f1_score": 0.0,
+    "auc_roc": 0.5,
+    "pr_auc": 0.0,
+    "false_alarm_rate": 0.0,
+    "confusion_matrix": [
+      [
+        2,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "umbral_usado": 0.6543427530031798,
+    "nota": "La recesión COVID (mar-abr 2020) es un shock exógeno (pandemia) no anticipable por indicadores macroeconómicos clásicos (yield spread, credit spread) a 12 meses de antelación. Se reporta como caso de estudio separado y no debe promediarse con la sub-ventana expansiva."
+  },
+  "global": {
+    "fecha_inicio": "2011-05-31",
+    "fecha_fin": "2025-01-31",
+    "n_observaciones": 165,
+    "n_recesiones_real": 2,
+    "n_recesiones_pred": 12,
+    "recall": 0.0,
+    "f1_score": 0.0,
+    "auc_roc": 0.7607361963190183,
+    "pr_auc": 0.03611111111111111,
+    "false_alarm_rate": 0.0736196319018405,
+    "confusion_matrix": [
+      [
+        151,
+        12
+      ],
+      [
+        2,
+        0
+      ]
+    ],
+    "umbral_usado": 0.6543427530031798
+  }
+}
