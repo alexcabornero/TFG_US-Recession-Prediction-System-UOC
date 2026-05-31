@@ -1,10 +1,11 @@
 # Sistema de Predicción de Crisis Financieras en EE.UU.
 
-Este repositorio contiene el desarrollo de un sistema end-to-end de machine learning para la predicción de recesiones económicas en EE.UU., como parte del Trabajo de Fin de Grado (TFG).
+Este repositorio contiene el desarrollo de un sistema end-to-end de machine learning para la predicción de recesiones económicas en EE.UU., como parte de un Trabajo de Fin de Grado (TFG).
 
 ## Requisitos Previos
 
 - Python >= 3.10
+- Conexión a internet (para descarga de datos de FRED y Yahoo Finance)
 - Clave de API de FRED (configurada en `.env`)
 
 ---
@@ -27,10 +28,6 @@ Si es la primera vez que descarga el repositorio, debe configurar su entorno vir
    ```powershell
    pip install -r requirements.txt
    ```
-En caso de tener algún problema con pip install usar:
-```powershell
-   py -m pip install -r requirements.txt
-   ```
 
 4. **Configurar credenciales:**
    - Introduzca su `FRED_API_KEY` en el archivo `.env`.
@@ -49,30 +46,64 @@ Una vez configurado el entorno, puede ejecutar todo el flujo de Ingeniería de D
 
 ---
 
-## 3. Ejecución del Modelado (Hito 2)
+## 3. Aplicación Web (Streamlit)
 
-Instrucciones para ejecutar los scripts del Hito 2 en orden:
+El sistema cuenta con una aplicación web interactiva que permite explorar el modelo, las variables predictoras, sus predicciones, su explicabilidad SHAP y los resultados de validación histórica y comparativa de modelos.
 
-1. `python modulo_2_modelado/baseline.py`
-2. `python modulo_2_modelado/random_forest.py`
-3. `python modulo_2_modelado/xgboost_model.py`
-4. `python modulo_2_modelado/lightgbm_model.py`
-5. `python modulo_2_modelado/comparativa_modelos.py`
-6. `python modulo_2_modelado/serializar_modelo_final.py`
-7. `python modulo_2_modelado/shap_analysis.py`
+### Ejecutar en local
 
-> [!NOTE]
-> Todos los scripts comparten la configuración de folds desde `walk_forward_config.py` y los resultados se guardan en `models/` y `docs/figures/`.
+```powershell
+streamlit run modulo_4_app/app.py
+```
+
+La aplicación arranca en `http://localhost:8501` con 6 páginas:
+
+- **Overview** — estado actual del riesgo y descripción del proyecto.
+- **Variables** — diccionario de los 16 indicadores agrupados por categoría económica con fichas técnicas, justificación económica y serie histórica con bandas NBER.
+- **Predicción** — serie temporal de probabilidad de recesión con bandas NBER y gauge.
+- **SHAP** — importancia global de indicadores y casos representativos VP / FN / VN.
+- **Backtesting** — Walk-Forward CV (4 folds), hold-out segmentado (expansión / COVID) y comparativa de las 12 combinaciones modelo × rebalanceo.
+- **Acerca de** — autor, disclaimer, referencias bibliográficas y licencia.
+
+### Aplicación desplegada online
+
+🔗 **URL pública:** [pendiente de despliegue]
+
+### Desplegar en Streamlit Community Cloud
+
+1. Hacer fork o clonar el repositorio en GitHub.
+2. Entrar en [share.streamlit.io](https://share.streamlit.io) e iniciar sesión con la cuenta de GitHub.
+3. Pulsar **New app** → seleccionar el repositorio, la rama (`master`) y el fichero `modulo_4_app/app.py` como entry point.
+4. La app se despliega automáticamente; el tema, las dependencias y el modelo se leen del repositorio.
+5. Actualizar el enlace público en este README.
 
 ---
 
 ## Estructura del Proyecto
 
-- `module_1_data/`: Adquisición y preprocesamiento de datos.
-- `modulo_2_modelado/`: Modelado, validación walk-forward y análisis de explicabilidad
-- `data/`: Almacenamiento de datos brutos y procesados.
-- `models/`: Modelos serializados, métricas y artefactos reproducibles
-- `docs/`: Figuras, tablas comparativas y documentación
+```
+.streamlit/
+└── config.toml                    # Tema de la app (azul navy académico)
+data/
+├── raw/                           # CSVs descargados (gitignored)
+└── processed/                     # Dataset maestro y derivados
+docs/
+└── figures/                       # Gráficos SHAP y análisis COVID
+models/
+├── final_model.pkl                # Modelo final serializado (versionado)
+└── *.json                         # Métricas, splits y resultados del Hito 2
+modulo_1_data/                     # Adquisición y preprocesamiento (Hito 1)
+modulo_2_modelado/                 # Modelado, validación y explicabilidad (Hito 2)
+modulo_4_app/                      # Aplicación Streamlit (Hito 3)
+├── app.py                         # Entry point
+├── paginas/                       # 6 páginas
+└── componentes/                   # Estilos, sidebar y cargadores cacheados
+spec.md                            # Especificación y estado de tareas
+summary.md                         # Cronología y resultados consolidados
+requirements.txt                   # Dependencias con versiones fijadas
+```
+
+---
 
 > [!NOTE]
-> Este proyecto tiene fines exclusivamente académicos y no constituye asesoramiento financiero.
+> Este proyecto tiene fines exclusivamente académicos y no constituye asesoramiento financiero ni recomendaciones de inversión.
