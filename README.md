@@ -83,7 +83,7 @@ La aplicación arranca en `http://localhost:8501` con 6 páginas:
 
 ```
 .streamlit/
-└── config.toml                    # Tema de la app (azul navy académico)
+└── config.toml                    # Tema de la app (azul)
 data/
 ├── raw/                           # CSVs descargados (gitignored)
 └── processed/                     # Dataset maestro y derivados
