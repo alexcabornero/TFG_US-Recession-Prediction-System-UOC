@@ -67,7 +67,7 @@ La aplicación arranca en `http://localhost:8501` con 6 páginas:
 
 ### Aplicación desplegada online
 
-🔗 **URL pública:** [pendiente de despliegue]
+🔗 **URL pública:** https://tfg-crisis-financieras.streamlit.app/
 
 ### Desplegar en Streamlit Community Cloud
 
@@ -91,10 +91,11 @@ docs/
 └── figures/                       # Gráficos SHAP y análisis COVID
 models/
 ├── final_model.pkl                # Modelo final serializado (versionado)
-└── *.json                         # Métricas, splits y resultados del Hito 2
-modulo_1_data/                     # Adquisición y preprocesamiento (Hito 1)
-modulo_2_modelado/                 # Modelado, validación y explicabilidad (Hito 2)
-modulo_4_app/                      # Aplicación Streamlit (Hito 3)
+└── *.json                         # Métricas, splits y resultados
+modulo_1_data/                     # Adquisición y preprocesamiento
+modulo_2_modelado/                 # Modelado, validación y explicabilidad SHAP
+modulo_3_explicabilidad/           # Otras alternativas futuras de explicabilidad
+modulo_4_app/                      # Aplicación Streamlit
 ├── app.py                         # Entry point
 ├── paginas/                       # 6 páginas
 └── componentes/                   # Estilos, sidebar y cargadores cacheados
