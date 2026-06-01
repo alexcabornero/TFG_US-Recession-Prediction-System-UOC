@@ -99,8 +99,6 @@ modulo_4_app/                      # Aplicación Streamlit
 ├── app.py                         # Entry point
 ├── paginas/                       # 6 páginas
 └── componentes/                   # Estilos, sidebar y cargadores cacheados
-spec.md                            # Especificación y estado de tareas
-summary.md                         # Cronología y resultados consolidados
 requirements.txt                   # Dependencias con versiones fijadas
 ```
 
