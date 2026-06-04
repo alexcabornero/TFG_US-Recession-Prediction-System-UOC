@@ -62,7 +62,7 @@ def _tab_walk_forward():
 
     agregado = datos.get("aggregated", {})
     if agregado:
-        st.markdown("**Métricas agregadas (media OOF):**")
+        st.markdown("**Métricas agregadas:**")
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("PR-AUC", f"{agregado.get('pr_auc_mean', 0):.3f}")
         c2.metric("AUC-ROC", f"{agregado.get('auc_roc_mean', 0):.3f}")
@@ -72,7 +72,7 @@ def _tab_walk_forward():
     st.markdown(
         f"""
         **Umbral óptimo seleccionado:** `{datos['umbral_optimo']:.4f}` (mediana
-        de los umbrales de Youden's J de los 4 folds).
+        de los umbrales de de los 4 folds).
 
         💡 La variabilidad por fold es esperable: los primeros folds tienen
         menos datos de entrenamiento y los periodos de test pueden contener
